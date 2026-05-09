@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BhaiKaBazaar - Apna Online Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div id="toastContainer"></div>
+    <div id="customerSite">
+        <header class="header">
+            <div class="header-top">
+                <i class="fas fa-shipping-fast"></i> FREE Delivery on orders above Rs. 10,000 | <i class="fas fa-money-bill-wave"></i> Cash on Delivery Available Nationwide | <i class="fas fa-phone-alt"></i> 03XX-XXXXXXX
+            </div>
+            <div class="header-main">
+                <div class="logo" onclick="showHome()">
+                    <div class="logo-icon"><i class="fas fa-store"></i></div>
+                    <div>
+                        <div class="logo-text">BhaiKaBazaar</div>
+                        <div class="logo-tagline">APNA ONLINE STORE</div>
+                    </div>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search products..." id="searchInput" onkeyup="searchProducts()">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-actions">
+                    <a href="#" class="header-btn" onclick="showAdminLogin(); return false;">
+                        <i class="fas fa-user-shield"></i><span>Admin</span>
+                    </a>
+                    <div class="header-btn" onclick="toggleCart()">
+                        <i class="fas fa-shopping-cart"></i><span>Cart</span>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="nav-bar">
+                <ul class="nav-links">
+                    <li><a href="#" class="active" onclick="filterCategory('all'); return false;">All Products</a></li>
+                    <li><a href="#" onclick="filterCategory('men'); return false;">Men</a></li>
+                    <li><a href="#" onclick="filterCategory('women'); return false;">Women</a></li>
+                    <li><a href="#" onclick="filterCategory('electronics'); return false;">Electronics</a></li>
+                    <li><a href="#" onclick="filterCategory('accessories'); return false;">Accessories</a></li>
+                    <li><a href="#" onclick="filterCategory('home'); return false;">Home & Living</a></li>
+                    <li><a href="#" onclick="filterCategory('groceries'); return false;">Groceries</a></li>
+                    <li><a href="#" onclick="filterCategory('foods'); return false;">Foods</a></li>
+                    <li><a href="#" onclick="filterCategory('beauty'); return false;">Beauty</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge"><i class="fas fa-star"></i> New Collection 2026</div>
+                <h1>Your Favorite Products <span>Delivered!</span></h1>
+                <p>Discover amazing products at unbeatable prices. Cash on Delivery available all over Pakistan.</p>
+                <div class="hero-buttons">
+                    <a href="#products" class="btn btn-primary" onclick="scrollToProducts(); return false;"><i class="fas fa-shopping-bag"></i> Shop Now</a>
+                    <a href="#categories" class="btn btn-outline" onclick="scrollToCategories(); return false;"><i class="fas fa-th-large"></i> Categories</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://cdn-icons-png.flaticon.com/512/3714/3714797.png" alt="Shopping">
+            </div>
+        </section>
+
+        <div class="features-bar">
+            <div class="feature-item"><div class="feature-icon"><i class="fas fa-shipping-fast"></i></div><div class="feature-text"><h4>Free Shipping</h4><p>On orders above Rs. 10,000</p></div></div>
+            <div class="feature-item"><div class="feature-icon"><i class="fas fa-money-bill-wave"></i></div><div class="feature-text"><h4>Cash on Delivery</h4><p>Pay when you receive</p></div></div>
+            <div class="feature-item"><div class="feature-icon"><i class="fas fa-undo"></i></div><div class="feature-text"><h4>Easy Returns</h4><p>7 days return policy</p></div></div>
+            <div class="feature-item"><div class="feature-icon"><i class="fas fa-headset"></i></div><div class="feature-text"><h4>24/7 Support</h4><p>We are always here</p></div></div>
+        </div>
+
+        <div class="section-title" id="products">
+            <h2>Featured <span>Products</span></h2>
+            <p>Handpicked just for you - Best quality at best prices</p>
+        </div>
+
+        <section class="products-section">
+            <div class="products-grid" id="productsGrid">
+                <div style="grid-column: 1/-1; text-align: center; padding: 60px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--primary);"></i>
+                    <p style="margin-top: 20px; color: var(--gray);">Loading products...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="categories-section" id="categories">
+            <div class="section-title" style="padding-top: 0;">
+                <h2 style="color: white;">Shop by <span>Category</span></h2>
+                <p style="color: rgba(255,255,255,0.7);">Find exactly what you are looking for</p>
+            </div>
+            <div class="categories-grid">
+                <div class="category-card" onclick="filterCategory('men')"><div class="category-icon"><i class="fas fa-tshirt"></i></div><h3>Men's Fashion</h3><p>Shirts, T-Shirts, Jeans</p></div>
+                <div class="category-card" onclick="filterCategory('women')"><div class="category-icon"><i class="fas fa-female"></i></div><h3>Women's Fashion</h3><p>Dresses, Tops, Kurtis</p></div>
+                <div class="category-card" onclick="filterCategory('electronics')"><div class="category-icon"><i class="fas fa-mobile-alt"></i></div><h3>Electronics</h3><p>Mobiles, Accessories, Gadgets</p></div>
+                <div class="category-card" onclick="filterCategory('accessories')"><div class="category-icon"><i class="fas fa-gem"></i></div><h3>Accessories</h3><p>Watches, Bags, Jewelry</p></div>
+                <div class="category-card" onclick="filterCategory('home')"><div class="category-icon"><i class="fas fa-couch"></i></div><h3>Home & Living</h3><p>Decor, Kitchen, Furniture</p></div>
+                <div class="category-card" onclick="filterCategory('groceries')"><div class="category-icon"><i class="fas fa-carrot"></i></div><h3>Groceries</h3><p>Fresh Vegetables, Fruits, Daily Needs</p></div>
+                <div class="category-card" onclick="filterCategory('foods')"><div class="category-icon"><i class="fas fa-utensils"></i></div><h3>Foods</h3><p>Snacks, Beverages, Ready to Eat</p></div>
+                <div class="category-card" onclick="filterCategory('beauty')"><div class="category-icon"><i class="fas fa-spa"></i></div><h3>Beauty & Skincare</h3><p>Makeup, Skincare, Personal Care</p></div>
+                <div class="category-card" onclick="filterCategory('all')"><div class="category-icon"><i class="fas fa-th"></i></div><h3>View All</h3><p>Explore everything</p></div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo-text">BhaiKaBazaar</div>
+                    <p>Your trusted online shopping destination in Pakistan. Quality products, affordable prices, and reliable delivery.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> FAQs</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Categories</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="filterCategory('men'); return false;"><i class="fas fa-chevron-right"></i> Men's Fashion</a></li>
+                        <li><a href="#" onclick="filterCategory('women'); return false;"><i class="fas fa-chevron-right"></i> Women's Fashion</a></li>
+                        <li><a href="#" onclick="filterCategory('electronics'); return false;"><i class="fas fa-chevron-right"></i> Electronics</a></li>
+                        <li><a href="#" onclick="filterCategory('groceries'); return false;"><i class="fas fa-chevron-right"></i> Groceries</a></li>
+                        <li><a href="#" onclick="filterCategory('foods'); return false;"><i class="fas fa-chevron-right"></i> Foods</a></li>
+                        <li><a href="#" onclick="filterCategory('beauty'); return false;"><i class="fas fa-chevron-right"></i> Beauty</a></li>
+                        <li><a href="#" onclick="filterCategory('home'); return false;"><i class="fas fa-chevron-right"></i> Home & Living</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Contact Us</h4>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-phone"></i> 03XX-XXXXXXX</a></li>
+                        <li><a href="#"><i class="fas fa-envelope"></i> info@bhaikabazaar.pk</a></li>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> Karachi, Pakistan</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 BhaiKaBazaar. All rights reserved. Made with love in Pakistan</p>
+            </div>
+        </footer>
+    </div>
+
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
+            <button class="modal-close" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer">
+            <div class="cart-total"><span>Total:</span><span id="cartTotal">Rs. 0</span></div>
+            <button class="btn btn-primary btn-full" onclick="showCheckout()"><i class="fas fa-credit-card"></i> Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal checkout-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-credit-card"></i> Checkout</h3>
+                <button class="modal-close" onclick="closeCheckout()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="checkout-steps">
+                    <div class="step active" id="step1"><div class="step-number">1</div><span>Shipping</span></div>
+                    <div class="step" id="step2"><div class="step-number">2</div><span>Payment</span></div>
+                    <div class="step" id="step3"><div class="step-number">3</div><span>Confirm</span></div>
+                </div>
+                <div id="shippingStep">
+                    <div class="form-group"><label>Full Name *</label><input type="text" id="customerName" placeholder="Enter your full name"></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Mobile Number *</label><input type="tel" id="customerPhone" placeholder="03XX-XXXXXXX"></div>
+                        <div class="form-group"><label>Email *</label><input type="email" id="customerEmail" placeholder="your@email.com"></div>
+                    </div>
+                    <div class="form-group"><label>Complete Address *</label><textarea id="customerAddress" placeholder="House #, Street, Area, Landmark"></textarea></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>City *</label><select id="customerCity"><option value="">Select City</option><option>Karachi</option><option>Lahore</option><option>Islamabad</option><option>Rawalpindi</option><option>Faisalabad</option><option>Multan</option><option>Peshawar</option><option>Quetta</option><option>Other</option></select></div>
+                        <div class="form-group"><label>Province *</label><select id="customerProvince"><option value="">Select Province</option><option>Sindh</option><option>Punjab</option><option>Khyber Pakhtunkhwa</option><option>Balochistan</option><option>Gilgit-Baltistan</option></select></div>
+                    </div>
+                    <div class="form-group"><label>PIN / Postal Code *</label><input type="text" id="customerPin" placeholder="74000"></div>
+                    <button class="btn btn-primary btn-full" onclick="goToPayment()">Continue to Payment <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div id="paymentStep" style="display: none;">
+                    <div class="form-group">
+                        <label>Select Payment Method *</label>
+                        <div class="payment-methods">
+                            <div class="payment-method selected" onclick="selectPayment('cod')"><input type="radio" name="payment" value="cod" checked><div class="payment-icon cod"><i class="fas fa-money-bill-wave"></i></div><div class="payment-info"><h4>Cash on Delivery (COD)</h4><p>Pay when you receive your order</p></div></div>
+                            <div class="payment-method" onclick="selectPayment('easypaisa')"><input type="radio" name="payment" value="easypaisa"><div class="payment-icon easypaisa"><i class="fas fa-mobile-alt"></i></div><div class="payment-info"><h4>EasyPaisa</h4><p>Pay via EasyPaisa Mobile Account</p></div></div>
+                            <div class="payment-method" onclick="selectPayment('jazzcash')"><input type="radio" name="payment" value="jazzcash"><div class="payment-icon jazzcash"><i class="fas fa-wallet"></i></div><div class="payment-info"><h4>JazzCash</h4><p>Pay via JazzCash Mobile Account</p></div></div>
+                        </div>
+                    </div>
+                    <div id="mobilePaymentDetails" style="display: none;">
+                        <div class="form-group"><label>EasyPaisa / JazzCash Number *</label><input type="tel" id="mobileAccountNumber" placeholder="03XX-XXXXXXX"></div>
+                        <div class="form-group"><label>CNIC Number (Last 6 digits) *</label><input type="text" id="cnicNumber" placeholder="XXXXXX" maxlength="6"></div>
+                    </div>
+                    <div class="order-summary-box">
+                        <div class="summary-row"><span>Subtotal:</span><span id="checkoutSubtotal">Rs. 0</span></div>
+                        <div class="summary-row"><span>Shipping:</span><span id="checkoutShipping">Rs. 0</span></div>
+                        <div class="summary-row total"><span>Total:</span><span id="checkoutTotal">Rs. 0</span></div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-outline" onclick="goBackToShipping()"><i class="fas fa-arrow-left"></i> Back</button>
+                        <button class="btn btn-primary" onclick="placeOrder()"><i class="fas fa-check-circle"></i> Place Order</button>
+                    </div>
+                </div>
+                <div id="successStep" style="display: none;">
+                    <div class="order-success">
+                        <i class="fas fa-check-circle"></i>
+                        <h2>Order Placed Successfully!</h2>
+                        <p>Thank you for shopping with BhaiKaBazaar. Your order has been confirmed.</p>
+                        <div class="order-details" id="orderDetails"></div>
+                        <button class="btn btn-primary btn-full" onclick="closeCheckout(); showHome();"><i class="fas fa-shopping-bag"></i> Continue Shopping</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="adminLoginModal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-lock"></i> Admin Login</h3>
+                <button class="modal-close" onclick="closeAdminLogin()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="login-brand">
+                    <div class="login-icon"><i class="fas fa-user-shield"></i></div>
+                    <h4>BhaiKaBazaar Admin</h4>
+                    <p>Secure Access Only</p>
+                </div>
+                <div class="form-group"><label>Username</label><input type="text" id="adminUsername" placeholder="Enter username"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="adminPassword" placeholder="Enter password"></div>
+                <button class="btn btn-primary btn-full" onclick="loginAdmin()"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <p class="login-hint">Default: admin / admin123 (Change after first login)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-container" id="adminPanel">
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <div class="logo-text">BhaiKaBazaar</div>
+                <p class="admin-subtitle">Admin Panel</p>
+            </div>
+            <ul class="admin-nav">
+                <li><a href="#" class="active" onclick="showAdminSection('dashboard'); return false;"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="#" onclick="showAdminSection('products'); return false;"><i class="fas fa-box"></i> Products</a></li>
+                <li><a href="#" onclick="showAdminSection('orders'); return false;"><i class="fas fa-shopping-bag"></i> Orders</a></li>
+                <li><a href="#" onclick="showAdminSection('settings'); return false;"><i class="fas fa-cog"></i> Settings</a></li>
+                <li class="logout-item"><a href="#" onclick="logoutAdmin(); return false;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+        <main class="admin-main">
+            <div class="admin-section active" id="adminDashboard">
+                <div class="admin-header">
+                    <h2>Dashboard Overview</h2>
+                    <div class="admin-user"><span>Welcome back, Admin!</span><div class="admin-user-avatar">A</div></div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-card-header"><div><h3 id="totalSales">Rs. 0</h3><p>Total Sales</p></div><div class="stat-card-icon orange"><i class="fas fa-rupee-sign"></i></div></div></div>
+                    <div class="stat-card"><div class="stat-card-header"><div><h3 id="totalOrders">0</h3><p>Total Orders</p></div><div class="stat-card-icon blue"><i class="fas fa-shopping-bag"></i></div></div></div>
+                    <div class="stat-card"><div class="stat-card-header"><div><h3 id="totalProducts">0</h3><p>Products</p></div><div class="stat-card-icon green"><i class="fas fa-box"></i></div></div></div>
+                    <div class="stat-card"><div class="stat-card-header"><div><h3 id="pendingOrders">0</h3><p>Pending Orders</p></div><div class="stat-card-icon purple"><i class="fas fa-clock"></i></div></div></div>
+                </div>
+                <div class="admin-table-container">
+                    <div class="admin-table-header"><h3><i class="fas fa-bell"></i> New Order Notifications</h3><button class="btn-add" onclick="clearNotifications()"><i class="fas fa-trash"></i> Clear All</button></div>
+                    <div id="notificationList" style="max-height: 300px; overflow-y: auto;"><p style="text-align: center; color: var(--gray); padding: 20px;">No new notifications</p></div>
+                </div>
+                <div class="admin-table-container" style="margin-top: 30px;">
+                    <div class="admin-table-header"><h3><i class="fas fa-clock"></i> Recent Orders</h3><button class="btn-add" onclick="showAdminSection('orders')"><i class="fas fa-eye"></i> View All</button></div>
+                    <table class="admin-table">
+                        <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Payment</th><th>Status</th></tr></thead>
+                        <tbody id="recentOrdersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="admin-section" id="adminProducts">
+                <div class="admin-header"><h2>Manage Products</h2><button class="btn-add" onclick="showAddProductModal()"><i class="fas fa-plus"></i> Add New Product</button></div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead><tr><th>Image</th><th>Product Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+                        <tbody id="adminProductsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="admin-section" id="adminOrders">
+                <div class="admin-header"><h2>All Orders</h2></div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead><tr><th>Order ID</th><th>Date</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="allOrdersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="admin-section" id="adminSettings">
+                <div class="admin-header"><h2>Admin Settings</h2></div>
+                <div class="admin-table-container">
+                    <h3 style="margin-bottom: 20px;"><i class="fas fa-key"></i> Change Login Credentials</h3>
+                    <div class="form-group"><label>Current Username</label><input type="text" id="currentUsername" readonly></div>
+                    <div class="form-group"><label>Current Password</label><input type="password" id="currentPassword" placeholder="Enter current password"></div>
+                    <div class="form-group"><label>New Username</label><input type="text" id="newUsername" placeholder="Enter new username"></div>
+                    <div class="form-group"><label>New Password</label><input type="password" id="newPassword" placeholder="Enter new password"></div>
+                    <div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPassword" placeholder="Confirm new password"></div>
+                    <button class="btn btn-primary" onclick="updateCredentials()"><i class="fas fa-save"></i> Update Credentials</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="productModal">
+        <div class="modal" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3 id="productModalTitle"><i class="fas fa-box"></i> Add New Product</h3>
+                <button class="modal-close" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editProductId">
+                <div class="form-group">
+                    <label>Product Image *</label>
+                    <div class="image-upload-tabs">
+                        <button type="button" class="image-tab active" id="tabUpload" onclick="switchImageTab('upload')"><i class="fas fa-cloud-upload-alt"></i> Upload Photo</button>
+                        <button type="button" class="image-tab" id="tabUrl" onclick="switchImageTab('url')"><i class="fas fa-link"></i> Image URL</button>
+                    </div>
+                    <div class="image-upload-panel active" id="panelUpload">
+                        <div class="image-dropzone" id="imageDropzone" onclick="document.getElementById('productImageFile').click()">
+                            <input type="file" id="productImageFile" accept="image/*" style="display: none;" onchange="handleImageUpload(this)">
+                            <div class="dropzone-content" id="dropzoneContent">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload or drag & drop</p>
+                                <span>JPG, PNG, WEBP (max 5MB)</span>
+                            </div>
+                            <img id="uploadPreview" class="upload-preview" style="display: none;">
+                            <button type="button" class="remove-image-btn" id="removeImageBtn" style="display: none;" onclick="event.stopPropagation(); removeUploadedImage()"><i class="fas fa-trash"></i> Remove</button>
+                        </div>
+                        <input type="hidden" id="productImageBase64">
+                    </div>
+                    <div class="image-upload-panel" id="panelUrl">
+                        <input type="text" id="productImageUrl" placeholder="https://example.com/image.jpg">
+                        <small style="color: var(--gray);">Paste image URL here</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Product Name *</label><input type="text" id="productName" placeholder="Enter product name"></div>
+                    <div class="form-group"><label>Category *</label><select id="productCategory"><option value="">Select</option><option value="men">Men</option><option value="women">Women</option><option value="electronics">Electronics</option><option value="accessories">Accessories</option><option value="home">Home & Living</option><option value="groceries">Groceries</option><option value="foods">Foods</option><option value="beauty">Beauty & Skincare</option></select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Price (Rs.) *</label><input type="number" id="productPrice" placeholder="1500"></div>
+                    <div class="form-group"><label>Original Price (Optional)</label><input type="number" id="productOriginalPrice" placeholder="2000"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Stock Quantity *</label><input type="number" id="productStock" placeholder="50"></div>
+                    <div class="form-group"><label>Badge (Optional)</label><select id="productBadge"><option value="">None</option><option value="new">New</option><option value="sale">Sale</option><option value="hot">Hot</option></select></div>
+                </div>
+                <div class="form-group"><label>Description</label><textarea id="productDescription" placeholder="Product description..."></textarea></div>
+                <button class="btn btn-primary btn-full" onclick="saveProduct()"><i class="fas fa-save"></i> Save Product</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
